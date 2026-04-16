@@ -44,7 +44,7 @@ class Incident(Base):
         Enum(IncidentSeverity), default=IncidentSeverity.unknown
     )
     attachments: Mapped[list[str] | None] = mapped_column(ARRAY(String), nullable=True)
-    triage_result: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    triage_result: Mapped[dict[str, object] | None] = mapped_column(JSONB, nullable=True)
     confidence: Mapped[float | None] = mapped_column(Float, nullable=True)
     cost_usd: Mapped[float | None] = mapped_column(Float, nullable=True)
     created_at: Mapped[datetime] = mapped_column(

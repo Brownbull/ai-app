@@ -12,9 +12,9 @@ from app.agent.triage import TriageResult
 logger = structlog.get_logger()
 
 
-async def dispatch_result(incident_id: str, triage: TriageResult) -> dict:
+async def dispatch_result(incident_id: str, triage: TriageResult) -> dict[str, object]:
     """Dispatch triage result to ticketing + notification systems."""
-    result: dict = {}
+    result: dict[str, object] = {}
 
     if os.environ.get("LINEAR_API_KEY"):
         result["ticket_id"] = await _create_linear_ticket(incident_id, triage)

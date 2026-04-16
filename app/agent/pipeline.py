@@ -13,12 +13,12 @@ from app.integrations.dispatcher import dispatch_result
 logger = structlog.get_logger()
 
 
-async def run_triage_pipeline(incident_id: str, incident: dict) -> dict:
+async def run_triage_pipeline(incident_id: str, incident: dict[str, object]) -> dict[str, object]:
     """Run the full triage pipeline for an incident."""
     log = logger.bind(incident_id=incident_id)
 
     # Stage 2 (GUARDRAILS)
-    safety = check_input_safety(incident["description"])
+    safety = check_input_safety(str(incident["description"]))
     if not safety["safe"]:
         log.warning("input_blocked", reason=safety["reason"])
         return {"status": "blocked", "reason": safety["reason"]}

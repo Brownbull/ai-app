@@ -47,7 +47,7 @@ class IncidentDetail(BaseModel):
     reporter_email: str
     status: str
     severity: str
-    triage_result: dict | None = None
+    triage_result: dict[str, object] | None = None
     confidence: float | None = None
     cost_usd: float | None = None
     created_at: str
@@ -67,7 +67,7 @@ SEVERITY_MAP = {
 }
 
 
-async def _run_pipeline_background(incident_id: str, incident_data: dict) -> None:
+async def _run_pipeline_background(incident_id: str, incident_data: dict[str, object]) -> None:
     """Run triage pipeline and update DB with result."""
     try:
         from app.db.repository import update_incident as update
@@ -78,17 +78,24 @@ async def _run_pipeline_background(incident_id: str, incident_data: dict) -> Non
         if result["status"] == "blocked":
             await update(incident_id, status=IncidentStatus.blocked)
         elif result["status"] == "completed":
+            from app.agent.classify import Classification
+            from app.agent.triage import TriageResult
+
             triage = result.get("triage")
             classification = result.get("classification")
-            severity = SEVERITY_MAP.get(
-                classification.severity if classification else "",
-                IncidentSeverity.unknown,
+            severity_key = (
+                classification.severity
+                if isinstance(classification, Classification)
+                else ""
             )
+            severity = SEVERITY_MAP.get(severity_key, IncidentSeverity.unknown)
             await update(
                 incident_id,
                 status=IncidentStatus.triaged,
                 severity=severity,
-                triage_result=triage.model_dump() if triage else None,
+                triage_result=(
+                    triage.model_dump() if isinstance(triage, TriageResult) else None
+                ),
             )
     except Exception:
         logger.exception("pipeline_failed", incident_id=incident_id)

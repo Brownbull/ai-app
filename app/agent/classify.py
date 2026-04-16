@@ -16,13 +16,13 @@ class Classification(BaseModel):
     reasoning: str
 
 
-async def classify_severity(incident: dict) -> Classification:
+async def classify_severity(incident: dict[str, object]) -> Classification:
     """Classify incident severity using cheap model.
 
     MVP: Rule-based fallback (step 4 in fallback chain).
     Production: PydanticAI agent with Gemini Flash.
     """
-    title = incident.get("title", "").lower()
+    title = str(incident.get("title", "")).lower()
 
     if any(word in title for word in ["down", "outage", "crash", "critical"]):
         severity = "critical"

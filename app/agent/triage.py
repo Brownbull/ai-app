@@ -19,7 +19,7 @@ class TriageResult(BaseModel):
     requires_escalation: bool
 
 
-async def triage_incident(incident: dict, classification: Classification) -> TriageResult:
+async def triage_incident(incident: dict[str, object], classification: Classification) -> TriageResult:
     """Triage incident using premium model with tool access.
 
     MVP: Rule-based. Production: PydanticAI agent with Claude Sonnet.
