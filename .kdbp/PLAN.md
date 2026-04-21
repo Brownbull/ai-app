@@ -12,13 +12,13 @@ Phase 2 — PydanticAI Agent — Structured Output (Level 2b): replace rule-base
 - **Domain:** SRE triage agent that classifies incidents, creates tickets, and notifies teams
 - **Level:** 2b — structured output enforcement + fallback chain ("never empty, never crash")
 - **Created:** 2026-04-20
-- **Last Updated:** 2026-04-21 (Phase 1 exec started)
+- **Last Updated:** 2026-04-21 (Phase 1 exec + commit complete)
 
 ## Phases
 
 | # | Phase | Description | Complexity | Exec | Review | Commit | Push |
 |---|-------|-------------|------------|------|--------|--------|------|
-| 1 | Upgrade TriageResult schema | Align `app/agent/triage.py` TriageResult to V2 spec: `severity: Literal["P0","P1","P2","P3","P4"]`, add `confidence: float`, `relevant_files: list[str]`; keep existing fields. | low | 🔄 | ⬜ | ⬜ | ⬜ |
+| 1 | Upgrade TriageResult schema | Align `app/agent/triage.py` TriageResult to V2 spec: `severity: Literal["P0","P1","P2","P3","P4"]`, add `confidence: float`, `relevant_files: list[str]`; keep existing fields. | low | ✅ | ⬜ | ✅ | ⬜ |
 | 2 | PydanticAI triage agent | New `app/agent/triage_agent.py`: `Agent(model="anthropic:claude-sonnet-4-6", output_type=TriageResult, retries=2)`. System prompt in `app/agent/prompts.py` with static Solidus service-map stub (dynamic map = Phase 3). Env-var API key via existing settings. Add `pydantic-ai` to `pyproject.toml`. | medium | ⬜ | ⬜ | ⬜ | ⬜ |
 | 3a | Fallback tier 2 — regex JSON extract | Wrapper catches PydanticAI validation exhaustion, runs `re.search(r'\{.*\}', text, re.DOTALL)` on last raw response, feeds to `TriageResult.model_validate_json`. Returns structured result if parse succeeds. | low | ⬜ | ⬜ | ⬜ | ⬜ |
 | 3b | Fallback tier 3+4 — rule-based + safe default | Tier 3: current rule-based `triage_incident` logic promoted to wrapper fallback (keyword inference from title/description). Tier 4: hardcoded safe default — `severity=P3`, `affected_service="unknown"`, `root_cause_hypothesis="Requires investigation"`, `mitigation_steps=["Route to SRE-Triage team"]`, `confidence=0.0`. Never raises. | low | ⬜ | ⬜ | ⬜ | ⬜ |
