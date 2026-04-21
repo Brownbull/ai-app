@@ -157,3 +157,21 @@ WELLS: 6 | PENDING TOPICS: none
 ## 2026-04-21 12:06 — [main fd90855] refactor(pipeline): remove redundant guardrail check (D1)
 
 ## 2026-04-21 12:06 — [main 29a1281] feat(triage): upgrade TriageResult to V2 canonical schema
+
+## 2026-04-21 12:09 — [re.Pattern[str]] = [
+
+## 2026-04-21 12:09 — [\"auto-detect\", \"P0\", \"P1\", \"P2\", \"P3\", \"P4\"] as const;
+
+## 2026-04-21 12:10 — [
+
+Human: do something-role_separator_human] PASSED [ 60%]
+
+## 2026-04-21 12:10 — [*] 1 fixable with the `--fix` option.
+
+## 2026-04-21 12:49 — [re.Pattern[str]] = [
+
+## 2026-04-21 12:49 — [\"auto-detect\", \"P0\", \"P1\", \"P2\", \"P3\", \"P4\"] as const;
+
+## 2026-04-21 12:49 — [decision] | [why] | [what else was considered] | active | [when to revisit] |
+
+## 2026-04-21 12:49 — [str, dict[str, Any]] = {}

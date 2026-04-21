@@ -31,3 +31,51 @@ export async function checkHealth(): Promise<{ status: string }> {
   if (!res.ok) throw new Error("Backend unreachable");
   return res.json();
 }
+
+export interface IncidentSubmitResponse {
+  incident_id: string;
+  status: string;
+}
+
+// FastAPI's HTTPException serializes as { detail: string } (or object).
+// Backend `detail` strings prefix the category (e.g. "Input blocked by
+// guardrails: ...", "File exceeds 10MB limit", "Invalid reporter_email
+// format") so the UI can branch on the string form without needing extra
+// structured fields today. When backend adds structured error responses,
+// widen this type to a discriminated union.
+export interface ApiErrorBody {
+  detail: string;
+}
+
+export class ApiError extends Error {
+  readonly status: number;
+  readonly detail: string;
+
+  constructor(status: number, detail: string) {
+    super(detail);
+    this.name = "ApiError";
+    this.status = status;
+    this.detail = detail;
+  }
+}
+
+export async function submitIncident(
+  data: FormData
+): Promise<IncidentSubmitResponse> {
+  const res = await fetch(`${API_BASE}/api/incidents`, {
+    method: "POST",
+    body: data,
+    // No Content-Type header — browser sets multipart boundary automatically
+  });
+  if (!res.ok) {
+    let detail = `Request failed (${res.status})`;
+    try {
+      const body = (await res.json()) as Partial<ApiErrorBody>;
+      if (typeof body.detail === "string") detail = body.detail;
+    } catch {
+      // Body wasn't JSON — keep the fallback message
+    }
+    throw new ApiError(res.status, detail);
+  }
+  return res.json();
+}
