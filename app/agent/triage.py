@@ -4,34 +4,48 @@ Uses PydanticAI output_type for structured output (V1).
 Routes to premium model for reasoning (V3).
 """
 
-from pydantic import BaseModel
+from typing import Literal
+
+from pydantic import BaseModel, Field
 
 from app.agent.classify import Classification
 
+Severity = Literal["P0", "P1", "P2", "P3", "P4"]
+
+_CLASSIFY_TO_SEVERITY: dict[str, Severity] = {
+    "critical": "P0",
+    "high": "P1",
+    "medium": "P2",
+    "low": "P3",
+}
+
 
 class TriageResult(BaseModel):
-    """Structured triage output — enforced by PydanticAI output_type."""
+    """Structured triage output — enforced by PydanticAI output_type (V2 schema)."""
 
-    summary: str
+    severity: Severity
+    affected_service: str
     root_cause_hypothesis: str
-    recommended_actions: list[str]
-    affected_services: list[str]
-    requires_escalation: bool
+    confidence: float = Field(ge=0.0, le=1.0)
+    mitigation_steps: list[str]
+    relevant_files: list[str]
 
 
 async def triage_incident(incident: dict[str, object], classification: Classification) -> TriageResult:
     """Triage incident using premium model with tool access.
 
-    MVP: Rule-based. Production: PydanticAI agent with Claude Sonnet.
+    MVP: Rule-based stub. Phase 2 replaces this with a PydanticAI agent + fallback chain.
     """
+    severity = _CLASSIFY_TO_SEVERITY.get(classification.severity, "P3")
     return TriageResult(
-        summary=f"Incident: {incident['title']} classified as {classification.severity}",
+        severity=severity,
+        affected_service=classification.category or "unknown",
         root_cause_hypothesis="Requires investigation",
-        recommended_actions=[
+        confidence=classification.confidence,
+        mitigation_steps=[
             f"Investigate {classification.category} systems",
             "Check recent deployments",
             "Review monitoring dashboards",
         ],
-        affected_services=["unknown"],
-        requires_escalation=classification.severity in ("critical", "high"),
+        relevant_files=[],
     )

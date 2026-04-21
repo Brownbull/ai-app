@@ -28,7 +28,12 @@ async def run_triage_pipeline(incident_id: str, incident: dict[str, object]) -> 
 
     # Stage 4 (AGENT)
     triage_result = await triage_incident(incident, classification)
-    log.info("triaged", actions=len(triage_result.recommended_actions))
+    log.info(
+        "triaged",
+        severity=triage_result.severity,
+        confidence=triage_result.confidence,
+        mitigation_steps=len(triage_result.mitigation_steps),
+    )
 
     # Stage 6 (DISPATCH)
     dispatch = await dispatch_result(incident_id, triage_result)
