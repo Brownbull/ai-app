@@ -6,3 +6,4 @@
 | Date | Phase | Task | Type | Note |
 |------|-------|------|------|------|
 | 2026-04-21 | 1 | T1 | schema-interpretation | PLAN.md said "keep existing fields" but BUILD-GUIDE-V2 canonical V2 spec + Phase 3b tier 4 safe default both require renamed fields (`affected_service` singular, `mitigation_steps` not `recommended_actions`, drop `summary`/`requires_escalation`). Resolved: used V2 canonical schema. Consequence: `app/agent/pipeline.py` log line needed `recommended_actions` → `mitigation_steps` rename (in-scope file, minor ripple). |
+| 2026-04-21 | 2 | T2 | scope-creep (negative) | Scope called to "Add `pydantic-ai` to `pyproject.toml`" but dep already pinned `pydantic-ai>=0.1` (installed 1.82.0) from an earlier scaffold. No change made. Agent constructed successfully — no drift. |

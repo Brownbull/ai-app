@@ -1,5 +1,33 @@
 # Session Ledger
 
+## 2026-04-21 15:30 — PHASE EXEC COMPLETE: Phase 2 — PydanticAI triage agent
+COMMITS: 7182dda (T1 prompts.py), <T2 pending> (triage_agent.py + plan/deviations state)
+TASKS: 2 tasks, 2 commits
+DEVIATIONS: 0 structural, 1 minor (pyproject already had pydantic-ai pinned — see DEVIATIONS.md)
+VERIFICATION: ruff + mypy --strict clean on both new files; pytest 47/47 green; agent smoke-import confirms model=claude-sonnet-4-6, output_type=TriageResult, retries=2
+SCOPE: new app/agent/prompts.py (+51), new app/agent/triage_agent.py (+28); pipeline/tests untouched (Phase 4/5)
+NEXT: Phase 3a (regex fallback tier 2). Wrapper module lands in app/agent/triage_agent.py alongside the Agent.
+MODEL: Sonnet (code + commit msg — conceptual new-pattern change, not mechanical)
+
+## 2026-04-21 — /gabe-teach arch next → input-guardrails
+CONCEPT: input-guardrails (foundational · agent, security) — picked by adjacency rule
+VERIFIED: 1/2 (Q1 clean on observability/named-evidence; Q2 partial on versioning-prevents-deploy-vs-attack-correlation)
+WRITES: STATE.md (+1 verified), HISTORY.md (+VERIFY + TAG), KNOWLEDGE.md (T1 ArchConcepts: input-guardrails), docs/wells/1-guardrails.md (+Architecture patterns section), docs/architecture-patterns.md (+input-guardrails section + Known limitation: unversioned pattern set)
+LEARNING: ~/.claude/gabe-lens-learning.md lazy-bootstrapped; P1 "Mechanism-vs-signal conflation" registered (2 obs, status suggested, 1 obs from activation)
+
+## 2026-04-21 — /gabe-teach story refresh
+STORYLINE: regenerated from 1 archived plan (Phase 1 Level 2a) + active Phase 1 Level 2b + 3 verified + 1 skipped topic + D1
+THESIS: "Mechanical enforcement beats prompt instructions at every layer that matters."
+WORDS: ~250
+
+## 2026-04-21 — PHASE 1 REVIEW CLOSED (retroactive) — Phase 1 formally complete
+REVIEW: retroactive on commits fd90855, 29a1281, aee7499, 8b40803 (all on origin/main)
+VERDICT: APPROVE — core Phase 1 scope (triage.py V2 schema) shipped in 29a1281; polish bundle (guardrails tightening, EmailStr restore, magic-byte MIME verify, async file write, frontend ApiError) in 8b40803 resolved all 8 findings from earlier /gabe-review
+CONFIDENCE: 95/100
+VERIFICATION: ruff + mypy --strict clean; pytest 47/47 green; tsc clean
+PLAN: Phase 1 Review ✅ ticked — all four gates now ✅ (Exec/Review/Commit/Push)
+UPSTREAM NOTES: classifier-dangling + LEDGER-hook-regex fixes logged to gabe_lens/docs/upstream-fixes-dangling-classifier-ledger-hook.md for dedicated session
+
 ## 2026-04-21 — PHASE EXEC COMPLETE: Phase 1 — Upgrade TriageResult schema
 COMMITS: fd90855 (D1 pipeline refactor), 29a1281 (Phase 1 V2 schema)
 TASKS: 1 task, 2 commits (bundled pre-existing D1 cleanup + Phase 1)
@@ -158,20 +186,27 @@ WELLS: 6 | PENDING TOPICS: none
 
 ## 2026-04-21 12:06 — [main 29a1281] feat(triage): upgrade TriageResult to V2 canonical schema
 
-## 2026-04-21 12:09 — [re.Pattern[str]] = [
+## 2026-04-21 12:55 — [main 8b40803] feat(phase-1): complete end-to-end guardrails+API+UI; reorg docs; populate KDBP wells
+FINDINGS: 0
+ACTIONS: bundle-all (user chose [b])
+DEFERRED: none
+NOTES:
+- 35 files, +4429/-64; two renames (BUILD-GUIDEs → docs/, docs/archive/)
+- uploads/ added to .gitignore (runtime artifact dir)
+- LEDGER had 8 garbage auto-capture entries (2026-04-21 12:09/12:10/12:49) cleaned manually after hook regex tightened (require hex-hash inside brackets) — see gabe_lens upstream fix 2026-04-21
 
-## 2026-04-21 12:09 — [\"auto-detect\", \"P0\", \"P1\", \"P2\", \"P3\", \"P4\"] as const;
+## 2026-04-21 13:02 — PUSH main -> main
+PR: — (trunk-based, direct push)
+CI: none (not configured)
+PROMOTION: N/A (trunk-based, target = main)
+DEPLOYMENTS: P1 (added row to .kdbp/DEPLOYMENTS.md)
+COMMITS: 4 (fd90855, 29a1281, aee7499, 8b40803 — Phase 1 finalized on remote)
+CLASSIFIER: trunk-first trigger fired; candidate pending user triage (accept/note/drop)
 
-## 2026-04-21 12:10 — [
+## 2026-04-21 13:19 — [accept]  Append to .kdbp/DECISIONS.md as D[next_id] with `operational` tag
 
-Human: do something-role_separator_human] PASSED [ 60%]
+## 2026-04-21 13:20 — [.+\] .+'; then COMMIT_LINE=$(echo \"$TOOL_OUTPUT\" | grep -oE '\[.+\] .+' | head -1); TS=$(date '+%Y-%m-%d %H:%M'); if [ -f .kdbp/LEDGER.md ]; then echo \"\" >> .kdbp/LEDGER.md; echo \"## ${TS} \u2014 ${COMMIT_LINE}\" >> .kdbp/LEDGER.md; fi; fi\",
 
-## 2026-04-21 12:10 — [*] 1 fixable with the `--fix` option.
+## 2026-04-21 13:20 — [accept]  Append to .kdbp/DECISIONS.md as D[next_id] with `operational` tag
 
-## 2026-04-21 12:49 — [re.Pattern[str]] = [
-
-## 2026-04-21 12:49 — [\"auto-detect\", \"P0\", \"P1\", \"P2\", \"P3\", \"P4\"] as const;
-
-## 2026-04-21 12:49 — [decision] | [why] | [what else was considered] | active | [when to revisit] |
-
-## 2026-04-21 12:49 — [str, dict[str, Any]] = {}
+## 2026-04-21 15:18 — [main 7182dda] feat(triage): add system prompt + static Solidus service-map stub
