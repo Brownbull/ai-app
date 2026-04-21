@@ -5,7 +5,6 @@ Follows Tier 9 agent checklist stages 2-6.
 
 import structlog
 
-from app.agent.guardrails import check_input_safety
 from app.agent.classify import classify_severity
 from app.agent.triage import triage_incident
 from app.integrations.dispatcher import dispatch_result
@@ -14,14 +13,14 @@ logger = structlog.get_logger()
 
 
 async def run_triage_pipeline(incident_id: str, incident: dict[str, object]) -> dict[str, object]:
-    """Run the full triage pipeline for an incident."""
-    log = logger.bind(incident_id=incident_id)
+    """Run the full triage pipeline for an incident.
 
-    # Stage 2 (GUARDRAILS)
-    safety = check_input_safety(str(incident["description"]))
-    if not safety["safe"]:
-        log.warning("input_blocked", reason=safety["reason"])
-        return {"status": "blocked", "reason": safety["reason"]}
+    Guardrails are enforced at the API boundary (app/api/main.py) — the single
+    caller today. If a second caller is added (retry worker, admin replay, queue
+    consumer), MOVE the guardrail check from the API into this function rather
+    than duplicating it in both places. See DECISIONS.md D1.
+    """
+    log = logger.bind(incident_id=incident_id)
 
     # Stage 3 (CLASSIFY)
     classification = await classify_severity(incident)
