@@ -1,7 +1,7 @@
 # Session Ledger
 
 ## 2026-04-21 15:30 — PHASE EXEC COMPLETE: Phase 2 — PydanticAI triage agent
-COMMITS: 7182dda (T1 prompts.py), <T2 pending> (triage_agent.py + plan/deviations state)
+COMMITS: 7182dda (T1 prompts.py), 99061e7 (T2 triage_agent.py + plan/deviations state)
 TASKS: 2 tasks, 2 commits
 DEVIATIONS: 0 structural, 1 minor (pyproject already had pydantic-ai pinned — see DEVIATIONS.md)
 VERIFICATION: ruff + mypy --strict clean on both new files; pytest 47/47 green; agent smoke-import confirms model=claude-sonnet-4-6, output_type=TriageResult, retries=2
@@ -210,3 +210,5 @@ CLASSIFIER: trunk-first trigger fired; candidate pending user triage (accept/not
 ## 2026-04-21 13:20 — [accept]  Append to .kdbp/DECISIONS.md as D[next_id] with `operational` tag
 
 ## 2026-04-21 15:18 — [main 7182dda] feat(triage): add system prompt + static Solidus service-map stub
+
+## 2026-04-21 15:20 — [main 99061e7] feat(triage): instantiate PydanticAI Agent with TriageResult output_type
