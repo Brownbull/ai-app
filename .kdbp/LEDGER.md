@@ -1,5 +1,20 @@
 # Session Ledger
 
+## 2026-04-22 11:25 — docs-audit
+UNIVERSE: 98 source files, 22 docs, 6 wells, 56 mappings
+FINDINGS: 0 (0 critical, 0 high, 0 medium, 0 low)
+ACTIONS: none (clean run)
+DEFERRED: 0
+NOTES: A2 DOCS.md mappings clean (all targets + sections present, all populated ≥80 chars, all matrix-required diagrams real not stub); A3 wells clean (all 6 have Topics heading; no well at ≥2 verified topics so diagram-stub check dormant; no well at ≥3 verified topics so Purpose-empty check dormant); A4 orphans clean; A5 source-coverage clean (all tracked files matched via DOCS.md pattern or well Paths glob).
+
+## 2026-04-21 — docs-audit
+UNIVERSE: 98 source files, 26 docs, 6 wells, 13 mappings
+FINDINGS: 15 (3 critical, 1 high, 2 medium, 9 low)
+ACTIONS: 1-5:update-docs (5 mapped doc sections populated from live code); 6:create-section (README#Configuration); 7-13:map (orphan meta/reference docs — sentinel self-map rows added to DOCS.md Meta section); 14-15:map (skip rows for app/__init__.py + vite.config.ts)
+DEFERRED: 0
+FILES: docs/architecture.md (Data Model / API Endpoints / Integrations), docs/AGENTS_USE.md (Agent Design / Safety), README.md (+Configuration), .kdbp/DOCS.md (+skip rows + Meta / Reference Docs section)
+UNSTAGED: changes remain unstaged per Step A7 — human runs /gabe-commit to ship.
+
 ## 2026-04-21 15:30 — PHASE EXEC COMPLETE: Phase 2 — PydanticAI triage agent
 COMMITS: 7182dda (T1 prompts.py), 99061e7 (T2 triage_agent.py + plan/deviations state)
 TASKS: 2 tasks, 2 commits
@@ -212,3 +227,12 @@ CLASSIFIER: trunk-first trigger fired; candidate pending user triage (accept/not
 ## 2026-04-21 15:18 — [main 7182dda] feat(triage): add system prompt + static Solidus service-map stub
 
 ## 2026-04-21 15:20 — [main 99061e7] feat(triage): instantiate PydanticAI Agent with TriageResult output_type
+
+## 2026-04-22 10:54 — [main 7182dda] feat(triage): add system prompt + static Solidus service-map stub
+
+## 2026-04-22 10:54 — docs-audit
+UNIVERSE: 98 files, 26 docs, 6 wells, 29 mappings
+FINDINGS: 17 (0 critical, 0 high, 5 medium, 12 low)
+ACTIONS: bulk [1]+[2]+[4] — 1-4:add-diagram 5:update-docs 6-7:archive 8-17:map(6)+skip(4)
+DEFERRED: 0 (all findings applied)
+NOTABLE: 5 notable, 7 minor (see digest below)

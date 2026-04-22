@@ -30,6 +30,14 @@ flowchart TD
     B --> C[End]
 ```
 
+## Architecture patterns
+
+### input-guardrails (foundational · agent, security)
+
+**Verified:** 2026-04-21 via /gabe-teach arch (score 1/2)
+**Used in this well's topics:** T1
+**Why we use it:** Filter adversarial input before the model sees it — 1000× cheaper than a model call, and names every blocked pattern so ops can trend attack surfaces over time.
+
 ## Topics (auto-appended)
 
 <!-- /gabe-teach topics appends verified topic summaries here on first run. -->

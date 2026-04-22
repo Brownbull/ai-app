@@ -46,7 +46,7 @@
 
 | # | Well | Class | Topic | Status | Tags | ArchConcepts | Last Touched | Verified Date | Score | Source |
 |---|------|-------|-------|--------|------|--------------|--------------|---------------|-------|--------|
-| T1 | G1 | WHY | Why 15→25 patterns + return matched pattern names | verified |  |  | 2026-04-17 | 2026-04-17 | 1/2 | working-tree: app/agent/guardrails.py |
+| T1 | G1 | WHY | Why 15→25 patterns + return matched pattern names | verified |  | input-guardrails | 2026-04-17 | 2026-04-17 | 1/2 | working-tree: app/agent/guardrails.py |
 | T2 | G3 | WHY | Why multipart + 202 Accepted + BackgroundTask | verified |  | async-background-processing | 2026-04-18 | 2026-04-18 | 2/2 | working-tree: app/api/main.py |
 | T3 | G6 | WHY | Why duplicate guardrails client-side + typed SubmitState | verified |  |  | 2026-04-18 | 2026-04-18 | 2/2 | working-tree: frontend/src/pages/SubmitPage.tsx |
 | T4 | G2 | WHY | Why guardrails also run inside the pipeline | skipped |  |  | 2026-04-18 | — | — | Lesson was speculative for current single-caller codebase. Decision recorded as D1; trigger logged in PENDING.md. Pipeline-side check removed. |
@@ -99,6 +99,14 @@
 - Outcome: T4 marked skipped (lesson was speculative). Pipeline-side guardrail code removed from `app/agent/pipeline.py`. Pipeline tests for injection blocking removed (coverage already lives in `tests/test_api.py`). Decision recorded as D1 with rationale + review trigger; PENDING.md D1-trigger logged for future-caller scenario.
 - Lesson for future /gabe-teach runs: don't force speculative defense-in-depth through the 6-part template when the single-caller argument hasn't matured.
 
+### 2026-04-21 — /gabe-teach arch next → input-guardrails
+- Wells active: G1 Guardrails
+- Concept: input-guardrails (foundational · agent, security) — picked via adjacency rule (agent momentum, alphabetical first among unverified foundationals).
+- Verified: 1/2 (Q1 clean on "which pattern fired + homogenized response"; Q2 partial — user identified observability layer notices first, missed deploy-vs-attack correlation failure that versioning specifically prevents).
+- Docs updated: docs/architecture-patterns.md (new input-guardrails section + Known limitation: unversioned pattern set).
+- Arch state: input-guardrails added to ~/.claude/gabe-arch/STATE.md as verified (1/2) in ai-app.
+- Tag applied: T1 "Why 15→25 patterns + return matched pattern names" tagged with `input-guardrails` ArchConcept (strong match: keywords + files + commit verbs all fire).
+
 <!-- Example:
 ### 2026-04-17 — /gabe-teach topics (post-commit)
 - Wells active: G1 Guardrails, G2 LLM Pipeline, G3 API Layer, G4 Frontend, G5 Observability
@@ -115,7 +123,13 @@
 <!-- Generated on demand by /gabe-teach story. Lossy analogy of what's been built and why. -->
 <!-- Auto-refresh trigger: 3 new archived plans since last generation. Manual: /gabe-teach story refresh. -->
 
-_Generated: 2026-04-18 (based on 0 archived plans + active Phase 1 plan + 3 verified topics + D1)_
+_Generated: 2026-04-21 (based on 1 archived plan — Phase 1 Level 2a — + active Phase 1 Level 2b + 3 verified topics + 1 skipped topic + D1)_
+
+Imagine building an emergency-call dispatch center from scratch. First sprint (archived Phase 1, Level 2a — "Incident Submission + Guardrails"): install the front door and the bouncer. Every incident report — title, description, file attachment — passes a 25-pattern frisk at the API boundary before anyone dials the oracle. Multipart intake, 10MB file cap, magic-byte MIME verification (no more "this .png is actually a shell script"), and `EmailStr` validation restored after a regression almost slipped through. The React storefront wired to the same back door through a typed `ApiError` class. Injection attempts waste zero tokens.
+
+Second sprint (active Phase 1, Level 2b — "PydanticAI Agent + Structured Output"): make the translator inside the building incapable of producing gibberish. Phases 1–2 of 6 have shipped. Phase 1 upgraded `TriageResult` to the V2 canonical shape — `Literal["P0"…"P4"]`, bounded `confidence: float`, `relevant_files: list[str]`. Phase 2 instantiated the real translator: `Agent(model="anthropic:claude-sonnet-4-6", output_type=TriageResult, retries=2)` landed in `app/agent/triage_agent.py`, with system prompt + static Solidus service-map stub in `app/agent/prompts.py`. Next phases (3a → 6) wire the 4-tier fallback chain — validation retry → regex-extract JSON from prose → rule-based inference → hardcoded "route to SRE-Triage at P3" — then thread it through the pipeline, cover it in tests, and burn one real token on an evidence run. Never empty. Never crashes.
+
+One load-bearing thesis holds the whole building together: **mechanical enforcement beats prompt instructions at every layer that matters.** Guardrails at the API trust boundary (not inside the pipeline — D1 ruled out speculative defense-in-depth; T4 "Why guardrails also run inside the pipeline" was skipped for exactly this reason). Pydantic at the LLM output contract. TypeScript `ApiError` at the UI boundary. When you can't trust instructions, enforce shape instead.
 
 Picture a 24-hour emergency clinic. A patient stumbles in at 2am with a bleeding story — "something broke in prod." Three things have to happen, in order, or the whole clinic fails: the bouncer at the door refuses people carrying weapons, the triage nurse writes a ticket and hands it off before the next patient arrives, and the waiting room display shows what's happening so the patient doesn't panic.
 
